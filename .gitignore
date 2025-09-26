@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Distributions
+dist/
+build/
+*.egg
+
+# Virtual environment
+.venv/
+env/
+venv/
+/venv/
+/myvenv/
+/env/
+/virtualenv/
+.virtual_documents/
+
+# Editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+.flaskenv
+
+# Test results
+.coverage
+htmlcov/
+
+# Jupyter Notebook files
+.ipynb_checkpoints/
+
+# Docker related
+.dockerignore
