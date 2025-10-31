@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000" # Change port to 8000
+    environment:
+      - PORT=8000
+      - MONGO_URI=mongodb://mongodb:27017/url_shortener
+      # Update the BASE_URL with your load balancer or local address
+      - BASE_URL=http://localhost:8000
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules # For Node, remove this. For Python, a similar bind mount might be needed for packages if you're developing, but often isn't needed.
+    networks:
+      - url-shortener-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - url-shortener-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  url-shortener-network:
+    driver: bridge
