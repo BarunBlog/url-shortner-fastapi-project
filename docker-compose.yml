@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -19,7 +17,8 @@ services:
       - url-shortener-network
 
   mongodb:
-    image: mongo:latest
+    image: mongo:6.0
+    container_name: url_shortner_mongo
     ports:
       - "27018:27017"
     volumes:
@@ -27,8 +26,37 @@ services:
     networks:
       - url-shortener-network
 
+  postgres:
+    image: postgres:15
+    container_name: url_shortner_postgres
+    ports:
+      - "5431:5432"
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+        - url-shortener-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.0
+    container_name: url_shortener_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass your_redis_password
+    volumes:
+      - redis-data:/data
+    networks:
+      - url-shortener-network
+    restart: unless-stopped
+
 volumes:
   mongodb_data:
+  postgres-data:
+  redis-data:
 
 networks:
   url-shortener-network:
