@@ -1,8 +1,8 @@
+import asyncpg
 from app.core.logging import logger
-from app.core.database import pg_pool
 
 
-async def get_unused_key() -> str:
+async def get_unused_key(pg_pool: asyncpg.Pool) -> str:
     """
     Atomically retrieves one unused short URL key from PostgreSQL and marks it as used.
     Uses the globally managed pg_pool.

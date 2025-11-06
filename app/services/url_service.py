@@ -1,20 +1,26 @@
+import redis
+import asyncpg
 from typing import Optional
 from app.core.config import settings
 from app.models.url_model import URL
-from app.core.database import url_collection
-from app.core.redis import redis_client
 from app.core.logging import logger
 from app.services.key_service import fetch_unique_key
+from motor.motor_asyncio import AsyncIOMotorCollection
 
 CACHE_TTL = 3600
 
 
-async def shorten_url(long_url: str) -> str:
+async def shorten_url(
+        long_url: str,
+        pg_pool: asyncpg.Pool,
+        url_collection: AsyncIOMotorCollection,
+        redis_client: redis.Redis
+) -> str:
     """Creates a short URL entry in the database."""
     try:
 
         # Get unique key from PostgreSQL
-        short_url_id = await fetch_unique_key()
+        short_url_id = await fetch_unique_key(pg_pool)
 
         # Prepare data for MongoDB (using keys that match the schema for clarity)
         url_data = URL(
@@ -36,7 +42,11 @@ async def shorten_url(long_url: str) -> str:
         raise e
 
 
-async def get_long_url(short_url_id: str) -> Optional[str]:
+async def get_long_url(
+        short_url_id: str,
+        url_collection: AsyncIOMotorCollection,
+        redis_client: redis.Redis
+) -> Optional[str]:
     """Retrieves the original URL and increments the visit count."""
 
     cached_url = await redis_client.get(short_url_id)
